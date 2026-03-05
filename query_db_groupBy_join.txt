@@ -1,0 +1,79 @@
+GROUP BY:
+
+1. Contare quanti iscritti ci sono stati ogni anno
+
+    SELECT COUNT(studente.id), studente.data_iscrizione AS anno 
+    FROM `studente` 
+    GROUP BY anno;  
+
+2. Contare gli insegnanti che hanno l'ufficio nello stesso edificio
+
+    SELECT COUNT(insegnanti.id), insegnanti.ufficio AS Ufficio 
+    FROM `insegnanti` 
+    GROUP BY ufficio;
+
+3. Calcolare la media dei voti di ogni appello d'esame
+
+   SELECT AVG(esami.voto) as Media, esami.n_appello as Appello_Esame 
+   FROM `esami` 
+   GROUP BY Appello_Esame;
+
+4. Contare quanti corsi di laurea ci sono per ogni dipartimento
+
+    SELECT COUNT(corso_di_laurea.id) AS CorsoLaurea, corso_di_laurea.dipartimenti_id AS Dipartimenti 
+    FROM `corso_di_laurea` 
+    GROUP BY Dipartimenti;
+   
+__________________________________________________________________________________________
+
+JOIN:
+
+1. Selezionare tutti gli studenti iscritti al Corso di Laurea in Economia
+
+    SELECT studente.* 
+    FROM `studente`
+    JOIN corso_di_laurea ON studente.corso_laurea_id = corso_di_laurea.id
+    WHERE corso_di_laurea.nome LIKE "Economia Aziendale (Triennale)";
+
+2. Selezionare tutti i Corsi di Laurea Magistrale del Dipartimento di Neuroscienze
+
+    SELECT corso_di_laurea.*, dipartimenti.nome AS Nome_Dip
+    FROM corso_di_laurea
+    JOIN dipartimenti ON dipartimenti.id = corso_di_laurea.dipartimenti_id
+    WHERE dipartimenti.nome LIKE "Neuroscienze" AND corso_di_laurea.nome LIKE "%magistrale%";
+
+3. Selezionare tutti i corsi in cui insegna Fulvio Amato (id=44)
+
+    SELECT corsi.*, insegnanti.nome AS Nome_Insegnante
+    FROM corsi
+    JOIN insegnanti ON corsi.id = insegnanti.corsi_id
+    WHERE insegnanti.id = 44;
+
+4. Selezionare tutti gli studenti con i dati relativi al corso di laurea a cui sono iscritti e il
+relativo dipartimento, in ordine alfabetico per cognome e nome
+
+    SELECT studente.*, corso_di_laurea.*, dipartimenti.*
+    FROM studente
+    JOIN corso_di_laurea ON corso_di_laurea.id = studente.corso_laurea_id
+    JOIN dipartimenti ON dipartimenti.id = corso_di_laurea.dipartimenti_id
+    ORDER BY studente.nome, studente.cognome ASC;
+
+5. Selezionare tutti i corsi di laurea con i relativi corsi e insegnanti
+
+    SELECT 
+        corso_di_laurea.id   AS id_corso_laurea,
+        corso_di_laurea.nome AS nome_corso_laurea,
+        corsi.id             AS id_corso,
+        corsi.nome           AS nome_corso,
+        corsi.cfu,
+        insegnanti.id        AS id_insegnante,
+        insegnanti.nome      AS nome_insegnante,
+        insegnanti.cognome   AS cognome_insegnante,
+        insegnanti.livello
+    FROM corso_di_laurea
+    JOIN corsi      ON corsi.corso_laurea_id = corso_di_laurea.id
+    JOIN insegnanti ON insegnanti.corsi_id   = corsi.id;
+
+6. Selezionare tutti i docenti che insegnano nel Dipartimento di Matematica (54)
+
+   
