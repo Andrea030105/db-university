@@ -2,7 +2,7 @@ GROUP BY:
 
 1. Contare quanti iscritti ci sono stati ogni anno
 
-    SELECT COUNT(studente.id), studente.data_iscrizione AS anno 
+    SELECT COUNT(studente.id), YEAR(studente.data_iscrizione) AS anno 
     FROM `studente` 
     GROUP BY anno;  
 
@@ -76,4 +76,23 @@ relativo dipartimento, in ordine alfabetico per cognome e nome
 
 6. Selezionare tutti i docenti che insegnano nel Dipartimento di Matematica (54)
 
-   
+SELECT DISTINCT `teachers`.`name`, `teachers`.`surname`,
+`teachers`.`phone`, `teachers`.`email`, `teachers`.`office_address`,
+`teachers`.`office_number`
+FROM `teachers`
+JOIN `course_teacher` ON `teachers`.`id` = `course_teacher`.`teacher_id`
+JOIN `courses` ON `course_teacher`.`course_id` = `courses`.`id`
+JOIN `degrees` ON `courses`.`degree_id` = `degrees`.`id`
+JOIN `departments` ON `degrees`.`department_id` = `departments`.`id`
+WHERE `departments`.`name` = 'Dipartimento di Matematica';
+
+
+BONUS. Selezionare per ogni dtudente qunanti tentativi d'esame ha sostenuto per supereare ciascuno dei suoi esami
+
+SELECT students.id, students.name, students.surname, courses.name, COUNT(exam_student.vote) AS numero_tentativi, MAX(exam_student.vote) AS voto_massimo
+FROM students
+JOIN exam_student ON students.id = exam_student.students_id
+JOIN exams ON exam_student.exam_id = exams.id
+JOIN courses ON exams.course_id = courses.id
+GROUP BY students.id, courses.id
+HAVING voto_massimo >=18
